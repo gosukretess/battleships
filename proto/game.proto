@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package game;
+
+import "google/protobuf/timestamp.proto"; 
+
+option go_package = "proto/gamepb";
+
+message Game {
+    string id = 1;
+    string userId1 = 2;
+    string userId2 = 3;
+    google.protobuf.Timestamp created = 4;
+    string nextUser = 5;
+  }
+
+message CreateGameRequest {
+    string userId1 = 1;
+    string userId2 = 2;
+  }
+  
+  message CreateGameResponse {
+    Game game = 1;
+  }
+  
+  message GetAllGamesRequest {}
+  
+  message GetAllGamesResponse {
+    repeated Game games = 1;
+  }
+  
+  enum EventType {
+    EVENT_TYPE_UNSPECIFIED = 0;
+    MOVE = 1;
+    HIT = 2;
+    MISS = 3;
+    TAKEN = 4;
+  }
+
+  message GameEvent {
+    string game_id = 1;
+    string user_id1 = 2;
+    string user_id2 = 3;
+    int32 x = 4;
+    int32 y = 5;
+    EventType type = 6;
+  }
+
+  message PlayerMoveResponse {
+
+  }
+
+  message Ship {
+    string game_id = 1;
+    string user_id = 2;
+    int32 x = 3;
+    int32 y = 4;
+  }
+  
+  message Move {
+    string game_id = 1;
+    string user_id = 2;
+    int32 x = 3;
+    int32 y = 4;
+    bool hit = 5;
+  }
+
+  message GetShipsRequest {
+    string game_id = 1;
+    string user_id = 2;
+  }
+  
+  message GetShipsResponse {
+    repeated Ship ships = 1;
+  }
+  
+  message GetMovesRequest {
+    string game_id = 1;
+    string user_id = 2;
+  }
+  
+  message GetMovesResponse {
+    repeated Move moves = 1;
+  }
+  
+  service GameService {
+    rpc CreateGame(CreateGameRequest) returns (CreateGameResponse);
+    rpc GetAllGames(GetAllGamesRequest) returns (GetAllGamesResponse);
+    rpc PlayerMove(stream GameEvent) returns (stream GameEvent);
+    rpc GetShips(GetShipsRequest) returns (GetShipsResponse);
+    rpc GetMoves(GetMovesRequest) returns (GetMovesResponse);
+  }
